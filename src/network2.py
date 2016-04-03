@@ -297,6 +297,46 @@ class Network(object):
         json.dump(data, f)
         f.close()
 
+
+def export(net):
+    f = open("code.txt", "w")
+    f.write("static final double[][][] layers = new double[][][] {\n")
+    firstLayer = True
+    l = 0
+    for layer in xrange(len(net.biases)):
+        if not(firstLayer):
+            f.write(",\n")
+        firstLayer = False
+        f.write("  new double[][] {\n")
+        firstUnit = True
+        i = 0
+        for unit in xrange(len(net.biases[layer])):
+            if not(firstUnit):
+                f.write(",\n")
+            firstUnit = False
+            fu = open("/Users/home/IdeaProjects/GoBot/src/com/company/net/Unit"+str(l)+str(i)+".java", "w")
+            # f.write("    new double[] { ")
+            # f.write(",".join([str(w) for w in net.weights[layer][unit]]))
+            # f.write(",")
+            # f.write(str(net.biases[layer][unit][0]))
+            # f.write("}")
+            f.write("    Unit"+str(l)+str(i)+".weights()")
+            fu.write("package com.company.net;\n")
+            fu.write("public class Unit"+str(l)+str(i)+" {\n")
+            fu.write("  public static double[] WEIGHTS = new double[] {\n    ")
+            fu.write(",".join([str(w) for w in net.weights[layer][unit]]))
+            fu.write(",")
+            fu.write(str(net.biases[layer][unit][0]))
+            fu.write("\n")
+            fu.write("  };\n")
+            fu.write("}\n")
+            fu.close()
+            i += 1
+        f.write("\n  }")
+        l += 1
+    f.write("\n};\n")
+    f.close()
+
 #### Loading a Network
 def load(filename):
     """Load a neural network from the file ``filename``.  Returns an
